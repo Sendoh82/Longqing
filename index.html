@@ -822,9 +822,13 @@
             </div>
             <div class="field"><label style="font-weight:500;color:var(--ink);">Hem Style 褲腳</label>
               <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-                <label class="style-radio"><input type="radio" name="p-hem-style" value="plain" checked> Plain Hem 平腳</label>
-                <label class="style-radio"><input type="radio" name="p-hem-style" value="cuffed"> Cuffed Hem 反折腳</label>
-                <label class="style-radio"><input type="radio" name="p-hem-style" value="raw"> Raw Hem 毛邊</label>
+                <label class="style-radio"><input type="radio" name="p-hem-style" value="normal_hem" checked> Normal Hem 普通褲腳</label>
+                <label class="style-radio"><input type="radio" name="p-hem-style" value="machine_sew"> Machine Sew 車縫腳</label>
+                <label class="style-radio"><input type="radio" name="p-hem-style" value="kaki_lepat"> Kaki Lepat 反折腳</label>
+              </div>
+              <div style="margin-top:8px;">
+                <label style="font-size:0.72rem;color:var(--muted);">Hem Size 褲腳闊度 (吋)</label>
+                <input type="number" id="p-hem-size" step="0.25" placeholder="e.g. 1.5" style="width:100%;border:none;border-bottom:1.5px solid var(--border);background:transparent;padding:4px 2px;font-size:0.88rem;font-family:'DM Mono',monospace;outline:none;">
               </div>
             </div>
             <div class="field"><label style="font-weight:500;color:var(--ink);">Fly Style 門襟</label>
@@ -841,6 +845,23 @@
                 <label class="style-radio"><input type="radio" name="p-side-pocket" value="straight"> Straight Pockets 直袋</label>
                 <label class="style-radio"><input type="radio" name="p-side-pocket" value="lshape"> L-Shape Pocket L形袋</label>
               </div>
+              <div style="margin-top:8px;">
+                <label style="font-size:0.72rem;color:var(--muted);">Side Pocket Size 旁袋尺寸 (吋 — Depth x Width)</label>
+                <input type="text" id="p-side-pocket-size" placeholder="e.g. 6.5 x 5" style="width:100%;border:none;border-bottom:1.5px solid var(--border);background:transparent;padding:4px 2px;font-size:0.88rem;font-family:'DM Mono',monospace;outline:none;">
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+            <div class="field"><label style="font-weight:500;color:var(--ink);">HP Inner Pocket 手機內袋</label>
+              <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                <label class="style-radio"><input type="radio" name="p-hp-pocket" value="none" checked> None 無</label>
+                <label class="style-radio"><input type="radio" name="p-hp-pocket" value="left"> Left 左邊</label>
+                <label class="style-radio"><input type="radio" name="p-hp-pocket" value="right"> Right 右邊</label>
+                <label class="style-radio"><input type="radio" name="p-hp-pocket" value="both"> Both 兩邊</label>
+              </div>
+            </div>
+            <div class="field"><label style="font-weight:500;color:var(--ink);">Material Used 布料</label>
+              <textarea id="p-material" placeholder="e.g. Italian wool, linen blend, supplier ref…" style="width:100%;margin-top:6px;border:1.5px solid #b8c8e8;border-radius:2px;padding:8px;font-family:inherit;font-size:0.85rem;min-height:72px;resize:vertical;background:var(--white);"></textarea>
             </div>
           </div>
         </div>
@@ -848,13 +869,13 @@
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;">
             <div class="field"><label style="font-weight:500;color:var(--ink);">Back Pockets 後袋款式</label>
               <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="none" checked> No Back Pocket 無後袋</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="normal"> Normal Back Pocket 普通後袋</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="normal_btn"> Normal + Button 普通後袋+鈕</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="double_line"> Double Line Pocket 雙線袋</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="double_line_btn"> Double Line + Button 雙線袋+鈕</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="covered"> Covered Pocket 蓋袋</label>
-                <label class="style-radio"><input type="radio" name="p-back-pocket" value="covered_btn"> Covered + Button 蓋袋+鈕</label>
+                <label class="style-radio"><input type="radio" name="p-back-pocket" value="none" checked> None 無後袋</label>
+                <label class="style-radio"><input type="radio" name="p-back-pocket" value="one"> 1 Back Pocket 一個後袋</label>
+                <label class="style-radio"><input type="radio" name="p-back-pocket" value="two"> 2 Back Pockets 兩個後袋</label>
+              </div>
+              <div style="margin-top:8px;">
+                <label style="font-size:0.72rem;color:var(--muted);">Back Pocket Notes 後袋備注</label>
+                <input type="text" id="p-back-pocket-note" placeholder="e.g. covered, with button…" style="width:100%;border:none;border-bottom:1.5px solid var(--border);background:transparent;padding:4px 2px;font-size:0.88rem;font-family:inherit;outline:none;">
               </div>
             </div>
             <div>
@@ -1397,13 +1418,18 @@ function clearForm() {
   resetRadio('p-loops',       '5_loops');
   resetRadio('p-waist-style', 'normal');
   resetRadio('p-leg',         'straight');
-  resetRadio('p-hem-style',   'plain');
+  resetRadio('p-hem-style',   'normal_hem');
   resetRadio('p-fly',         'zip');
   resetRadio('p-side-pocket', 'none');
+  resetRadio('p-hp-pocket',   'none');
   resetRadio('p-back-pocket','none');
   resetRadio('p-inner-cloth','original');
   const ppd = document.getElementById('p-pocket-depth'); if(ppd) ppd.value='';
   const ppw = document.getElementById('p-pocket-width'); if(ppw) ppw.value='';
+  const phsz = document.getElementById('p-hem-size'); if(phsz) phsz.value='';
+  const pspsz = document.getElementById('p-side-pocket-size'); if(pspsz) pspsz.value='';
+  const pbpn2 = document.getElementById('p-back-pocket-note'); if(pbpn2) pbpn2.value='';
+  const pmat2 = document.getElementById('p-material'); if(pmat2) pmat2.value='';
   resetRadio('p-fit',         'regular');
   resetRadio('j-collar-size',  '2.5');
   resetRadio('j-front-btn',    '1');
@@ -1579,9 +1605,13 @@ function saveOrder() {
       waistStyle: getRadio('p-waist-style'),
       legStyle:   getRadio('p-leg'),
       hemStyle:   getRadio('p-hem-style'),
+      hemSize:    document.getElementById('p-hem-size').value,
       fly:        getRadio('p-fly'),
-      sidePocket:  getRadio('p-side-pocket'),
-      backPocket:  getRadio('p-back-pocket'),
+      sidePocket:     getRadio('p-side-pocket'),
+      sidePocketSize: document.getElementById('p-side-pocket-size').value,
+      hpPocket:   getRadio('p-hp-pocket'),
+      backPocket:      getRadio('p-back-pocket'),
+      backPocketNote:  document.getElementById('p-back-pocket-note').value,
       pocketDepth: document.getElementById('p-pocket-depth').value,
       pocketWidth: document.getElementById('p-pocket-width').value,
       innerCloth:  getRadio('p-inner-cloth'),
@@ -1590,6 +1620,7 @@ function saveOrder() {
       innerStyle: getRadio('p-inner-style'),
       innerDepth: document.getElementById('p-inner-depth').value,
       innerWidth: document.getElementById('p-inner-width').value,
+      material:   document.getElementById('p-material').value,
       special:    document.getElementById('p-special').value,
     };
   }
@@ -1706,10 +1737,14 @@ function editOrder(id) {
   setRadio('p-loops',       t.loops      || '5_loops');
   setRadio('p-waist-style', t.waistStyle || 'normal');
   setRadio('p-leg',         t.legStyle   || 'straight');
-  setRadio('p-hem-style',   t.hemStyle   || 'plain');
+  setRadio('p-hem-style',   t.hemStyle   || 'normal_hem');
+  const phsize = document.getElementById('p-hem-size'); if(phsize) phsize.value = t.hemSize||'';
   setRadio('p-fly',         t.fly        || 'zip');
   setRadio('p-side-pocket', t.sidePocket  || 'none');
+  const psps = document.getElementById('p-side-pocket-size'); if(psps) psps.value = t.sidePocketSize||'';
+  setRadio('p-hp-pocket',   t.hpPocket   || 'none');
   setRadio('p-back-pocket', t.backPocket  || 'none');
+  const pbpn = document.getElementById('p-back-pocket-note'); if(pbpn) pbpn.value = t.backPocketNote||'';
   const pd = document.getElementById('p-pocket-depth'); if(pd) pd.value = t.pocketDepth||'';
   const pw = document.getElementById('p-pocket-width'); if(pw) pw.value = t.pocketWidth||'';
   setRadio('p-inner-cloth', t.innerCloth  || 'original');
@@ -1718,6 +1753,7 @@ function editOrder(id) {
   setRadio('p-inner-style', t.innerStyle || 'open');
   const pid = document.getElementById('p-inner-depth'); if(pid) pid.value = t.innerDepth||'';
   const piw = document.getElementById('p-inner-width'); if(piw) piw.value = t.innerWidth||'';
+  const pmat = document.getElementById('p-material'); if(pmat) pmat.value = t.material||'';
   safeSet('p-special', t.special||'');
   showPhotoSection(id);
   openModal('modal-order');
@@ -1771,12 +1807,13 @@ const FIT_LABELS     = { slim:'Slim Fit 修身', regular:'Regular Fit 標準', l
 const BHEM_LABELS    = { straight:'Straight Hem 平腳', curved:'Curved Hem 圓腳', split:'Split Hem 叉腳' };
 const BCUFF_LABELS   = { single:'Single Cuff 單袖口', double:'Double Cuff 雙袖口', elastic:'Elastic Cuff 橡筋袖口' };
 const PLEG_LABELS    = { straight:'Straight Leg 直腳', tapered:'Tapered 窄腳', wide:'Wide Leg 闊腳', bootcut:'Bootcut 靴型' };
-const PHEM_LABELS    = { plain:'Plain Hem 平腳', cuffed:'Cuffed Hem 反折腳', raw:'Raw Hem 毛邊' };
+const PHEM_LABELS    = { normal_hem:'Normal Hem 普通腳', machine_sew:'Machine Sew 車縫腳', kaki_lepat:'Kaki Lepat 反折腳' };
 const FLY_LABELS     = { zip:'Zip Fly 拉鏈', button:'Button Fly 鈕扣' };
 const INNERCOUNT_LABELS = { none:'No Inner Pocket', one:'1 Inner Pocket', two:'2 Inner Pockets' };
 const INNERSTYLE_LABELS = { open:'Open 開口袋', zip:'Zip 拉鏈袋', button:'Button 鈕扣袋', velcro:'Velcro 魔術貼' };
 const PSIDE_LABELS   = { none:'No Side Pocket', slanted:'Slanted 斜袋', jeans:'Jeans Style 牛仔袋', straight:'Straight 直袋', lshape:'L-Shape L形袋' };
-const PBACK_LABELS   = { none:'No Back Pocket', normal:'Normal 普通後袋', normal_btn:'Normal+Button 普通後袋+鈕', double_line:'Double Line 雙線袋', double_line_btn:'Double Line+Button 雙線袋+鈕', covered:'Covered 蓋袋', covered_btn:'Covered+Button 蓋袋+鈕' };
+const PBACK_LABELS   = { none:'None 無後袋', one:'1 Back Pocket 一個後袋', two:'2 Back Pockets 兩個後袋' };
+const PHPPOCKET_LABELS = { none:'None 無', left:'Left 左邊', right:'Right 右邊', both:'Both 兩邊' };
 const ICLOTH_LABELS  = { original:'Original Cloth 原布', lining:'Lining Cloth 裡布', cotton:'Cotton 棉布' };
 const DTYPE_LABELS   = { casual:'Casual 日常', evening:'Evening Gown 晚裝', cocktail:'Cocktail 雞尾酒裙', wedding:'Wedding 婚紗', qipao:'Qipao 旗袍' };
 const DWAIST_LABELS  = { natural:'Natural Waist 自然腰', empire:'Empire Waist 高腰', drop:'Drop Waist 低腰', fitted:'Fitted Waist 收腰' };
@@ -2024,6 +2061,19 @@ function showCustomer(key) {
       ${t.frontStyle ? `<div class="detail-item"><span class="detail-key">前幅</span><span class="detail-val">${FRONT_LABELS[t.frontStyle]||t.frontStyle}</span></div>` : ''}
       ${t.loops      ? `<div class="detail-item"><span class="detail-key">褲耳</span><span class="detail-val">${LOOP_LABELS[t.loops]||t.loops}</span></div>` : ''}
       ${t.waistStyle ? `<div class="detail-item"><span class="detail-key">腰款</span><span class="detail-val">${WAIST_LABELS[t.waistStyle]||t.waistStyle}</span></div>` : ''}
+      ${t.legStyle   ? `<div class="detail-item"><span class="detail-key">褲型</span><span class="detail-val">${PLEG_LABELS[t.legStyle]||t.legStyle}</span></div>` : ''}
+      ${t.hemStyle   ? `<div class="detail-item"><span class="detail-key">褲腳款</span><span class="detail-val">${PHEM_LABELS[t.hemStyle]||t.hemStyle}</span></div>` : ''}
+      ${t.hemSize    ? `<div class="detail-item"><span class="detail-key">褲腳闊</span><span class="detail-val">${t.hemSize} 吋</span></div>` : ''}
+      ${t.fly        ? `<div class="detail-item"><span class="detail-key">門襟</span><span class="detail-val">${FLY_LABELS[t.fly]||t.fly}</span></div>` : ''}
+      ${t.sidePocket ? `<div class="detail-item"><span class="detail-key">旁袋</span><span class="detail-val">${PSIDE_LABELS[t.sidePocket]||t.sidePocket}</span></div>` : ''}
+      ${t.sidePocketSize ? `<div class="detail-item"><span class="detail-key">旁袋尺寸</span><span class="detail-val">${t.sidePocketSize}</span></div>` : ''}
+      ${t.hpPocket   ? `<div class="detail-item"><span class="detail-key">手機袋</span><span class="detail-val">${PHPPOCKET_LABELS[t.hpPocket]||t.hpPocket}</span></div>` : ''}
+      ${t.backPocket ? `<div class="detail-item"><span class="detail-key">後袋</span><span class="detail-val">${PBACK_LABELS[t.backPocket]||t.backPocket}</span></div>` : ''}
+      ${t.backPocketNote ? `<div class="detail-item"><span class="detail-key">後袋備注</span><span class="detail-val">${t.backPocketNote}</span></div>` : ''}
+      ${t.pocketDepth||t.pocketWidth ? `<div class="detail-item"><span class="detail-key">口袋尺寸</span><span class="detail-val">${t.pocketDepth||'—'} × ${t.pocketWidth||'—'} 吋</span></div>` : ''}
+      ${t.innerCloth ? `<div class="detail-item"><span class="detail-key">口袋內布</span><span class="detail-val">${ICLOTH_LABELS[t.innerCloth]||t.innerCloth}</span></div>` : ''}
+      ${t.innerCount && t.innerCount!=='none' ? `<div class="detail-item"><span class="detail-key">內袋</span><span class="detail-val">${INNERCOUNT_LABELS[t.innerCount]||t.innerCount} · ${INNERSTYLE_LABELS[t.innerStyle]||t.innerStyle}</span></div>` : ''}
+      ${t.material   ? `<div class="detail-item" style="grid-column:1/-1"><span class="detail-key">布料</span><span class="detail-val" style="font-family:inherit;">${t.material}</span></div>` : ''}
       ${t.special    ? `<div class="detail-item" style="grid-column:1/-1"><span class="detail-key">特別要求</span><span class="detail-val" style="font-family:inherit;">${t.special}</span></div>` : ''}
       </div>
     </div>` : `<div style="color:var(--muted);font-size:0.82rem;padding:10px 0;margin-bottom:14px;">👖 暫無褲子量度記錄</div>`;
@@ -2826,182 +2876,4 @@ function fillFormFromScan() {
   if (hasJacket) {
     const j = d.jacket;
     set('m-collar',     j.collar);
-    set('m-sleeve-mid', j.sleeveMid);
-    set('m-cuff',       j.cuff);
-    set('m-shoulder',   j.shoulder);
-    set('m-sleeve-len', j.sleeveLen);
-    set('m-chest',      j.chest);
-    set('m-waist',      j.waist);
-    set('m-hip',        j.hip);
-    set('m-jacket-len', j.jacketLen);
-  }
-
-  // Trouser measurements
-  if (hasTrousers) {
-    const t = d.trousers;
-    set('p-waist',  t.waist);
-    set('p-hip',    t.hip);
-    set('p-thigh',  t.thigh);
-    set('p-crotch', t.crotch);
-    set('p-knee',   t.knee);
-    set('p-hem',    t.hem);
-    set('p-length', t.length);
-  }
-
-  openModal('modal-order');
-  showToast('✅ AI 已填入資料，請檢查並儲存');
-}
-
-
-
-// ═══════════════════════════════════════════
-// PHOTO — Google Drive per order
-// ═══════════════════════════════════════════
-let currentPhotoOrder = null;
-
-function openPhotos(id) {
-  const o = orders.find(o => o.id === id);
-  if (!o) return;
-  currentPhotoOrder = o;
-
-  // Build folder name from order no + name
-  const folderName = o.no + '_' + (o.name||'').replace(/[^a-zA-Z0-9一-鿿]/g,'_');
-
-  document.getElementById('photo-order-info').innerHTML =
-    `<strong style="font-family:'Noto Serif TC',serif;">No.${o.no} — ${o.name}</strong>
-     <span style="color:var(--muted);margin-left:10px;font-size:0.78rem;">${TYPE_LABELS[o.type]||''} · ${o.date||''}</span>`;
-
-  // Check if folder link already saved
-  const savedLink = o.driveFolder || '';
-  const statusEl = document.getElementById('photo-folder-status');
-
-  if (savedLink) {
-    statusEl.innerHTML = `<div style="background:#d1fae5;border:1px solid #10b981;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#065f46;">
-      ✅ 相簿已建立 · Folder exists</div>`;
-  } else {
-    statusEl.innerHTML = `<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#92400e;">
-      📁 點擊下方按鈕在 Google Drive 建立此訂單的相簿<br>
-      <span style="font-size:0.73rem;opacity:0.8;">建議命名：<strong>${folderName}</strong></span></div>`;
-  }
-
-  openModal('modal-photo');
-}
-
-function openDriveFolder() {
-  if (!currentPhotoOrder) return;
-  const o = currentPhotoOrder;
-  const savedLink = o.driveFolder || '';
-
-  if (savedLink) {
-    // Open existing folder
-    window.open(savedLink, '_blank');
-  } else {
-    // Open base folder so user can create subfolder
-    const baseUrl = `https://drive.google.com/drive/folders/${GDRIVE_BASE_FOLDER}`;
-    window.open(baseUrl, '_blank');
-    // Show prompt to save link after creating
-    setTimeout(() => {
-      const link = prompt(
-        `在 Google Drive 中為此訂單建立一個新資料夾，命名為:\n${o.no}_${(o.name||'').replace(/[^a-zA-Z0-9一-鿿]/g,'_')}\n\n建立後，請複製該資料夾的連結並貼上：`
-      );
-      if (link && link.startsWith('http')) {
-        saveDriveLink(link);
-      }
-    }, 2000);
-  }
-}
-
-function saveDriveLink(link) {
-  if (!currentPhotoOrder) return;
-  const idx = orders.findIndex(o => o.id === currentPhotoOrder.id);
-  if (idx < 0) return;
-  orders[idx].driveFolder = link;
-  currentPhotoOrder = orders[idx];
-  saveOrders(orders);
-  syncOrderToSheet(orders[idx]);
-  showToast('✅ 相簿連結已儲存');
-  // Update status display
-  document.getElementById('photo-folder-status').innerHTML =
-    `<div style="background:#d1fae5;border:1px solid #10b981;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#065f46;">✅ 相簿已連結儲存</div>`;
-}
-
-function copyFolderLink() {
-  if (!currentPhotoOrder) return;
-  const link = currentPhotoOrder.driveFolder ||
-    `https://drive.google.com/drive/folders/${GDRIVE_BASE_FOLDER}`;
-  navigator.clipboard.writeText(link).then(() => showToast('🔗 連結已複製'));
-  document.getElementById('photo-link-display').style.display = '';
-  document.getElementById('photo-link-display').textContent = link;
-}
-
-// ═══════════════════════════════════════════
-// SEED: Pre-load MR ARSHAD No.8355 if not exists
-// ═══════════════════════════════════════════
-function seedArshad() {
-  const exists = orders.find(o => o.no === 8355);
-  if (exists) return;
-  const order = {
-    id: 'arshad8355',
-    no: 8355,
-    type: 'trousers',
-    date: '2026-02-08',
-    name: 'MR ARSHAD',
-    phone: '96308732',
-    total: 80,
-    deposit: 20,
-    balance: 60,
-    delivery: '',
-    completion: '',
-    waistbandHeight: '1.5',
-    pieces: 1,
-    status: 'pending',
-    notes: '',
-    jacket: {},
-    baju: {},
-    dress: {},
-    trousers: {
-      waistTop:    '43',
-      waistBot:    '43.5',
-      crotchLen:   '32.75',
-      thigh:       '30.5',
-      frontHip:    '12',
-      backHip:     '12.75',
-      knee:        '26.25',
-      hem:         '20.25',
-      length:      '36.75',
-      frontStyle:  'two_pleat',
-      loops:       '8_loops',
-      waistStyle:  'normal',
-      legStyle:    'straight',
-      hemStyle:    'plain',
-      fly:         'zip',
-      sidePocket:  'slanted',
-      backPocket:  'covered_btn',
-      pocketDepth: '',
-      pocketWidth: '',
-      innerCloth:  'original',
-      innerCount:  'two',
-      innerStyle:  'open',
-      innerDepth:  '',
-      innerWidth:  '',
-      fit:         'regular',
-      special:     '15平 8耳 内舱2 (43x41)',
-    }
-  };
-  orders.unshift(order);
-  saveOrders(orders);
-  syncOrderToSheet(order);
-  showToast('✅ MR ARSHAD No.8355 已載入');
-}
-
-// ═══════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════
-loadFabrics();
-renderDashboard();
-renderOrders();
-loadAllOrders().then(() => seedArshad()).catch(() => seedArshad());
-
-</script>
-</body>
-</html>
+    s
