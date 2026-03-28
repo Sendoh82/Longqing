@@ -1079,6 +1079,22 @@
   </div>
 </div>
 
+<!-- ══ PHOTO MODAL ══ -->
+<div class="modal-overlay" id="modal-photo">
+  <div class="modal" style="max-width:480px;">
+    <div class="modal-head"><h2>📷 訂單相簿 Order Photos</h2><button class="close-btn" onclick="closeModal('modal-photo')">✕</button></div>
+    <div class="modal-body">
+      <div id="photo-order-info" style="margin-bottom:14px;"></div>
+      <div id="photo-folder-status" style="margin-bottom:14px;"></div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-gold" style="flex:1;" onclick="openDriveFolder()">📂 開啟 / 建立相簿</button>
+        <button class="btn btn-outline" onclick="copyFolderLink()">🔗 複製連結</button>
+      </div>
+      <div id="photo-link-display" style="display:none;font-size:0.72rem;color:var(--muted);margin-top:8px;word-break:break-all;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ CUSTOMER DETAIL MODAL ══ -->
 <div class="modal-overlay" id="modal-cust">
   <div class="modal" style="max-width:600px;">
@@ -2876,4 +2892,187 @@ function fillFormFromScan() {
   if (hasJacket) {
     const j = d.jacket;
     set('m-collar',     j.collar);
-    s
+    set('m-sleeve-mid', j.sleeveMid);
+    set('m-cuff',       j.cuff);
+    set('m-shoulder',   j.shoulder);
+    set('m-sleeve-len', j.sleeveLen);
+    set('m-chest',      j.chest);
+    set('m-waist',      j.waist);
+    set('m-hip',        j.hip);
+    set('m-jacket-len', j.jacketLen);
+  }
+
+  // Trouser measurements
+  if (hasTrousers) {
+    const t = d.trousers;
+    set('p-waist',  t.waist);
+    set('p-hip',    t.hip);
+    set('p-thigh',  t.thigh);
+    set('p-crotch', t.crotch);
+    set('p-knee',   t.knee);
+    set('p-hem',    t.hem);
+    set('p-length', t.length);
+  }
+
+  openModal('modal-order');
+  showToast('✅ AI 已填入資料，請檢查並儲存');
+}
+
+
+
+// ═══════════════════════════════════════════
+// PHOTO — Google Drive per order
+// ═══════════════════════════════════════════
+let currentPhotoOrder = null;
+
+function openPhotos(id) {
+  const o = orders.find(o => o.id === id);
+  if (!o) return;
+  currentPhotoOrder = o;
+
+  // Build folder name from order no + name
+  const folderName = o.no + '_' + (o.name||'').replace(/[^a-zA-Z0-9一-鿿]/g,'_');
+
+  document.getElementById('photo-order-info').innerHTML =
+    `<strong style="font-family:'Noto Serif TC',serif;">No.${o.no} — ${o.name}</strong>
+     <span style="color:var(--muted);margin-left:10px;font-size:0.78rem;">${TYPE_LABELS[o.type]||''} · ${o.date||''}</span>`;
+
+  // Check if folder link already saved
+  const savedLink = o.driveFolder || '';
+  const statusEl = document.getElementById('photo-folder-status');
+
+  if (savedLink) {
+    statusEl.innerHTML = `<div style="background:#d1fae5;border:1px solid #10b981;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#065f46;">
+      ✅ 相簿已建立 · Folder exists</div>`;
+  } else {
+    statusEl.innerHTML = `<div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#92400e;">
+      📁 點擊下方按鈕在 Google Drive 建立此訂單的相簿<br>
+      <span style="font-size:0.73rem;opacity:0.8;">建議命名：<strong>${folderName}</strong></span></div>`;
+  }
+
+  openModal('modal-photo');
+}
+
+function openDriveFolder() {
+  if (!currentPhotoOrder) return;
+  const o = currentPhotoOrder;
+  const savedLink = o.driveFolder || '';
+
+  if (savedLink) {
+    // Open existing folder
+    window.open(savedLink, '_blank');
+  } else {
+    // Open base folder so user can create subfolder
+    const baseUrl = `https://drive.google.com/drive/folders/${GDRIVE_BASE_FOLDER}`;
+    window.open(baseUrl, '_blank');
+    // Show prompt to save link after creating
+    setTimeout(() => {
+      const link = prompt(
+        `在 Google Drive 中為此訂單建立一個新資料夾，命名為:\n${o.no}_${(o.name||'').replace(/[^a-zA-Z0-9一-鿿]/g,'_')}\n\n建立後，請複製該資料夾的連結並貼上：`
+      );
+      if (link && link.startsWith('http')) {
+        saveDriveLink(link);
+      }
+    }, 2000);
+  }
+}
+
+function saveDriveLink(link) {
+  if (!currentPhotoOrder) return;
+  const idx = orders.findIndex(o => o.id === currentPhotoOrder.id);
+  if (idx < 0) return;
+  orders[idx].driveFolder = link;
+  currentPhotoOrder = orders[idx];
+  saveOrders(orders);
+  syncOrderToSheet(orders[idx]);
+  showToast('✅ 相簿連結已儲存');
+  // Update status display
+  document.getElementById('photo-folder-status').innerHTML =
+    `<div style="background:#d1fae5;border:1px solid #10b981;border-radius:4px;padding:8px 12px;font-size:0.8rem;color:#065f46;">✅ 相簿已連結儲存</div>`;
+}
+
+function copyFolderLink() {
+  if (!currentPhotoOrder) return;
+  const link = currentPhotoOrder.driveFolder ||
+    `https://drive.google.com/drive/folders/${GDRIVE_BASE_FOLDER}`;
+  navigator.clipboard.writeText(link).then(() => showToast('🔗 連結已複製'));
+  document.getElementById('photo-link-display').style.display = '';
+  document.getElementById('photo-link-display').textContent = link;
+}
+
+// ═══════════════════════════════════════════
+// SEED: Pre-load MR ARSHAD No.8355 if not exists
+// ═══════════════════════════════════════════
+function seedArshad() {
+  const exists = orders.find(o => o.no === 8355);
+  if (exists) return;
+  const order = {
+    id: 'arshad8355',
+    no: 8355,
+    type: 'trousers',
+    date: '2026-02-08',
+    name: 'MR ARSHAD',
+    phone: '96308732',
+    total: 80,
+    deposit: 20,
+    balance: 60,
+    delivery: '',
+    completion: '',
+    waistbandHeight: '1.5',
+    pieces: 1,
+    status: 'pending',
+    notes: '',
+    jacket: {},
+    baju: {},
+    dress: {},
+    trousers: {
+      waistTop:    '43',
+      waistBot:    '43.5',
+      crotchLen:   '32.75',
+      thigh:       '30.5',
+      frontHip:    '12',
+      backHip:     '12.75',
+      knee:        '26.25',
+      hem:         '20.25',
+      length:      '36.75',
+      frontStyle:  'two_pleat',
+      loops:       '8_loops',
+      waistStyle:  'normal',
+      legStyle:    'straight',
+      hemStyle:    'normal_hem',
+      hemSize:     '',
+      fly:         'zip',
+      sidePocket:  'slanted',
+      sidePocketSize: '',
+      hpPocket:    'none',
+      backPocket:  'one',
+      backPocketNote: 'covered with button',
+      pocketDepth: '',
+      pocketWidth: '',
+      innerCloth:  'original',
+      innerCount:  'two',
+      innerStyle:  'open',
+      innerDepth:  '',
+      innerWidth:  '',
+      material:    '',
+      fit:         'regular',
+      special:     '15平 8耳 内舱2 (43x41)',
+    }
+  };
+  orders.unshift(order);
+  saveOrders(orders);
+  syncOrderToSheet(order);
+  showToast('✅ MR ARSHAD No.8355 已載入');
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+loadFabrics();
+renderDashboard();
+renderOrders();
+loadAllOrders().then(() => seedArshad()).catch(() => seedArshad());
+
+</script>
+</body>
+</html>
