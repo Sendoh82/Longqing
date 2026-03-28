@@ -1291,12 +1291,15 @@ function rowToOrder(r) {
     balance: parseFloat(r['Balance'])||0,
     delivery: r['Delivery']||'', completion: r['Completion']||'',
     pieces: parseInt(r['Pieces'])||1, status: r['Status']||'pending', notes: r['Notes']||'',
+    waistbandHeight: r['WaistbandHeight']||'', photoUrl: r['PhotoUrl']||'',
     jacket: {
       collar: r['J-Collar'], sleeveMid: r['J-SleeveMid'], cuff: r['J-Cuff'],
       shoulder: r['J-Shoulder'], sleeveLen: r['J-SleeveLen'], chest: r['J-Chest'],
       waist: r['J-Waist'], hip: r['J-Hip'], jacketLen: r['J-JacketLen'],
       collarSize: r['J-CollarSize'], frontBtn: r['J-FrontBtn'],
-      sleeveBtn: r['J-SleeveBtn'], backVent: r['J-BackVent'], special: r['J-Special'],
+      sleeveBtn: r['J-SleeveBtn'], backVent: r['J-BackVent'],
+      lapel: r['J-Lapel'], pocket: r['J-Pocket'], lining: r['J-Lining'],
+      shoulderPad: r['J-ShoulderPad'], fit: r['J-Fit'], special: r['J-Special'],
     },
     dress: {
       shoulder: r['D-Shoulder'], chest: r['D-Chest'], waist: r['D-Waist'],
@@ -1304,7 +1307,9 @@ function rowToOrder(r) {
       cuff: r['D-Cuff'], neckDepth: r['D-NeckDepth'], backLen: r['D-BackLen'],
       silhouette: r['D-Silhouette'], neckline: r['D-Neckline'],
       sleeve: r['D-Sleeve'], backStyle: r['D-BackStyle'],
-      lining: r['D-Lining'], zip: r['D-Zip'], special: r['D-Special'],
+      lining: r['D-Lining'], zip: r['D-Zip'],
+      dressType: r['D-Type'], waistStyle: r['D-WaistStyle'],
+      hemLen: r['D-HemLen'], embellish: r['D-Embellish'], special: r['D-Special'],
     },
     baju: {
       collar: r['B-Collar'], shoulder: r['B-Shoulder'], chest: r['B-Chest'],
@@ -1312,7 +1317,8 @@ function rowToOrder(r) {
       cuff: r['B-Cuff'], elbow: r['B-Elbow'], shirtLen: r['B-ShirtLen'],
       collarStyle: r['B-CollarStyle'], sleeveStyle: r['B-SleeveStyle'],
       pocket: r['B-Pocket'], placket: r['B-Placket'],
-      btnType: r['B-BtnType'], lining: r['B-Lining'], special: r['B-Special'],
+      btnType: r['B-BtnType'], lining: r['B-Lining'],
+      hem: r['B-Hem'], cuffStyle: r['B-CuffStyle'], fit: r['B-Fit'], special: r['B-Special'],
     },
     trousers: {
       waistTop: r['P-WaistTop'], waistBot: r['P-WaistBot'],
@@ -1320,11 +1326,16 @@ function rowToOrder(r) {
       frontHip: r['P-FrontHip'], backHip: r['P-BackHip'],
       knee: r['P-Knee'], hem: r['P-Hem'], length: r['P-Length'],
       frontStyle: r['P-FrontStyle'], loops: r['P-Loops'], waistStyle: r['P-WaistStyle'],
-      sidePocket: r['P-SidePocket'], backPocket: r['P-BackPocket'],
+      legStyle: r['P-LegStyle'], hemStyle: r['P-HemStyle'], hemSize: r['P-HemSize'],
+      fly: r['P-Fly'],
+      sidePocket: r['P-SidePocket'], sidePocketSize: r['P-SidePocketSize'],
+      hpPocket: r['P-HpPocket'],
+      backPocket: r['P-BackPocket'], backPocketNote: r['P-BackPocketNote'],
+      pocketDepth: r['P-PocketDepth'], pocketWidth: r['P-PocketWidth'],
+      innerCloth: r['P-InnerCloth'],
       innerCount: r['P-InnerCount'], innerStyle: r['P-InnerStyle'],
       innerDepth: r['P-InnerDepth'], innerWidth: r['P-InnerWidth'],
-      pocketDepth: r['P-PocketDepth'], pocketWidth: r['P-PocketWidth'],
-      innerCloth: r['P-InnerCloth'], special: r['P-Special'],
+      fit: r['P-Fit'], material: r['P-Material'], special: r['P-Special'],
     }
   };
 }
